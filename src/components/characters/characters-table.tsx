@@ -45,7 +45,7 @@ const CharactersTable = <Data, Value>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead className="text-white" key={header.id}>
+                <TableHead key={header.id}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),

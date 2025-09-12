@@ -11,7 +11,7 @@ import QueryProvider from './providers/query-provider';
 const rootRoute = createRootRoute({
   component: () => (
     <QueryProvider>
-      <div className="bg-black flex flex-col justify-start items-center text-white">
+      <div className="flex flex-col justify-start items-center">
         <span className="text-2xl font-semibold py-8">
           Rick and Morty Characters
         </span>
@@ -25,7 +25,7 @@ const home = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: () => (
-    <div className="bg-black flex flex-col justify-start items-center text-white">
+    <div className="flex flex-col justify-start items-center">
       <Characters />
     </div>
   ),
