@@ -9,13 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
 
 type ActionBarProps = {
   isFetching: boolean;
+  refetch: () => void
 };
 
-const ActionBar = ({ isFetching }: ActionBarProps) => {
+const ActionBar = ({ isFetching, refetch}: ActionBarProps) => {
   const { getFiltersState, setSearchString, setStatus, resetFilters } =
     useCharactersFiltersStore((state) => state);
 
-  const { status } = getFiltersState();
+  const { status, searchString } = getFiltersState();
 
   const onSearchChange = useDebouncedCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +32,7 @@ const ActionBar = ({ isFetching }: ActionBarProps) => {
   return (
     <div className="relative flex gap-8 mb-8">
       <Input
-        placeholder="Search by name..."
+        placeholder={searchString !== '' ? searchString : 'Search by name...'}
         className="w-64"
         onChange={onSearchChange}
         disabled={isFetching}
@@ -47,6 +48,10 @@ const ActionBar = ({ isFetching }: ActionBarProps) => {
           <SelectItem value="unknown">Unknown</SelectItem>
         </SelectContent>
       </Select>
+
+      <Button variant="secondary" onClick={refetch} disabled={isFetching}>
+        Refresh data
+      </Button>
 
       <Button variant="secondary" onClick={resetFilters} disabled={isFetching}>
         Reset filters

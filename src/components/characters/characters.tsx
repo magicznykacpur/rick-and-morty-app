@@ -1,27 +1,39 @@
 import { useGetCharactersQuery } from '@/api/character';
-import { Skeleton } from '@/components/ui/skeleton';
+import useUpdateSearch from '@/hooks/useUpdateSearch';
+import { useCharactersFiltersStore } from '@/stores/character-filters-store';
+import { useSearch } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import ActionBar from './action-bar';
 import CharactersTable from './characters-table';
 import useCharactersColumns from './columns';
-import ActionBar from './action-bar';
-import { useCharactersFiltersStore } from '@/stores/character-filters-store';
 
 const Characters = () => {
-  const { getFiltersState } = useCharactersFiltersStore((state) => state);
-  const { searchString, status} = getFiltersState();
+  const { getFiltersState, setSearchString, setStatus, setPageSize } =
+    useCharactersFiltersStore((state) => state);
 
-  const { data, isLoading, isFetching } = useGetCharactersQuery({
+  const search = useSearch({ from: '/' });
+
+  useEffect(() => {
+    if (search.status) setStatus(search.status);
+    if (search.pageSize) setPageSize(Number(search.pageSize));
+    if (search.searchString)
+      setSearchString(decodeURIComponent(search.searchString));
+  }, [search.searchString, search.status, search.pageSize]);
+
+  const { searchString, status, pageSize } = getFiltersState();
+
+  useUpdateSearch({ searchString, status, pageSize });
+
+  const { data, isFetching, refetch } = useGetCharactersQuery({
     searchString,
     status,
   });
+
   const columns = useCharactersColumns();
 
   return (
     <>
-      {isLoading && (
-        <Skeleton className="bg-black animate-pulse w-full h-screen" />
-      )}
-
-      <ActionBar isFetching={isFetching} />
+      <ActionBar isFetching={isFetching} refetch={refetch} />
 
       {data && data.results && (
         <CharactersTable columns={columns} data={data.results} />
