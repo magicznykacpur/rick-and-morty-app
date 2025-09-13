@@ -26,7 +26,7 @@ import {
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type CharactersTableProps<Data, Value> = {
   columns: ColumnDef<Data, Value>[];
@@ -61,6 +61,10 @@ const CharactersTable = <Data, Value>({
       pagination,
     },
   });
+
+  useEffect(() => {
+    table.setPageSize(pageSize);
+  }, [pageSize]);
 
   return (
     <div className="overflow-hidden rounded-md border">

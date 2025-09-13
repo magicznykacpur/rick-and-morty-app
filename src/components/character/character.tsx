@@ -91,8 +91,9 @@ const Character = () => {
                   '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-gray-300 [&::-webkit-scrollbar-thumb]:bg-gray-500',
                 )}
               >
-                {data.episode.map((value) => (
+                {data.episode.map((value, index) => (
                   <a
+                    key={index}
                     href={value}
                     target="_blank"
                     className="py-4 px-3 hover:bg-accent font-semibold"
