@@ -5,6 +5,7 @@ import {
   Outlet,
   RouterProvider,
 } from '@tanstack/react-router';
+import { Slide, ToastContainer } from 'react-toastify';
 import Characters from './components/characters/characters';
 import QueryProvider from './providers/query-provider';
 
@@ -17,6 +18,19 @@ const rootRoute = createRootRoute({
         </span>
       </div>
       <Outlet />
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable={false}
+        pauseOnHover
+        theme="dark"
+        transition={Slide}
+      />
     </QueryProvider>
   ),
 });

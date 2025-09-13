@@ -1,42 +1,54 @@
+import { useCharactersFiltersStore } from '@/stores/character-filters-store';
 import { SelectValue } from '@radix-ui/react-select';
-import { useState, type ChangeEvent } from 'react';
+import { Loader2 } from 'lucide-react';
+import { type ChangeEvent } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
+import PageSizeSelect from './page-size-select';
 
-const initFilters = {
-  searchString: '',
-  status: '',
-  pageSize: 1,
+type ActionBarProps = {
+  isFetching: boolean;
 };
 
-const ActionBar = () => {
-  const [filters, setFilters] = useState(() => initFilters);
+const ActionBar = ({ isFetching }: ActionBarProps) => {
+  const {
+    getFiltersState,
+    setSearchString,
+    setStatus,
+    setPageSize,
+    resetFilters,
+  } = useCharactersFiltersStore((state) => state);
 
-  const onSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFilters({ ...filters, searchString: event.target.value });
-  };
+  const { status, pageSize } = getFiltersState();
+
+  const onSearchChange = useDebouncedCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setSearchString(event.target.value);
+    },
+    500,
+  );
 
   const onStatusChange = (status: string) => {
-    setFilters({ ...filters, status });
+    setStatus(status);
   };
 
   const onPageSizeChange = (pageSize: string) => {
-    setFilters({ ...filters, pageSize: Number(pageSize) });
+    setPageSize(Number(pageSize));
   };
 
-  const resetFilters = () => setFilters(initFilters);
-
   return (
-    <div className="flex gap-8 mb-8">
+    <div className="relative flex gap-8 mb-8">
       <Input
         placeholder="Search by name..."
+        className="w-64"
         onChange={onSearchChange}
-        value={filters.searchString}
+        disabled={isFetching}
       />
 
-      <Select onValueChange={onStatusChange} value={filters.status}>
-        <SelectTrigger>
+      <Select onValueChange={onStatusChange} value={status}>
+        <SelectTrigger className="w-32" disabled={isFetching}>
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
@@ -46,22 +58,15 @@ const ActionBar = () => {
         </SelectContent>
       </Select>
 
-      <Select onValueChange={onPageSizeChange} value={String(filters.pageSize)}>
-        <SelectTrigger>
-          <SelectValue placeholder="Page Size" />
-        </SelectTrigger>
-        <SelectContent className="max-h-[500px]">
-          {[...Array(50)].map((_, index) => (
-            <SelectItem key={index} value={`${index + 1}`}>
-              {index + 1}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <PageSizeSelect onChange={onPageSizeChange} value={pageSize} />
 
-      <Button variant="secondary" onClick={resetFilters}>
+      <Button variant="secondary" onClick={resetFilters} disabled={isFetching}>
         Reset filters
       </Button>
+
+      {isFetching && (
+        <Loader2 size={32} className="absolute -right-16 animate-spin" />
+      )}
     </div>
   );
 };

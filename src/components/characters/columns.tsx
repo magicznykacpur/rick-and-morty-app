@@ -12,7 +12,7 @@ const useCharactersColumns = () => {
     options: {
       className?: string;
       cell?: ({ row }: { row: Row<Character> }) => ReactNode;
-    } = {},
+    } = {className: 'min-w-[300px]'},
   ): ColumnDef<Character> => ({
     accessorKey,
     header: ({ column }) => (

@@ -1,10 +1,25 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { toast } from 'react-toastify';
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
 const getQueryClient = () => {
-  if (!browserQueryClient) browserQueryClient = new QueryClient();
+  if (!browserQueryClient)
+    browserQueryClient = new QueryClient({
+      queryCache: new QueryCache({
+        onError: (error) => toast.error(error.message),
+      }),
+      defaultOptions: {
+        queries: {
+          retry: 1,
+        },
+      },
+    });
 
   return browserQueryClient;
 };
