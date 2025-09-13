@@ -1,15 +1,13 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
-const useUpdateSearch = ({
-  searchString,
-  status,
-  pageSize,
-}: {
+type UpdateSearch = {
   searchString: string;
   status: string;
   pageSize: number;
-}) => {
+};
+
+const useUpdateSearch = ({ searchString, status, pageSize }: UpdateSearch) => {
   const navigate = useNavigate();
 
   useEffect(() => {
