@@ -6,22 +6,16 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
-import PageSizeSelect from './page-size-select';
 
 type ActionBarProps = {
   isFetching: boolean;
 };
 
 const ActionBar = ({ isFetching }: ActionBarProps) => {
-  const {
-    getFiltersState,
-    setSearchString,
-    setStatus,
-    setPageSize,
-    resetFilters,
-  } = useCharactersFiltersStore((state) => state);
+  const { getFiltersState, setSearchString, setStatus, resetFilters } =
+    useCharactersFiltersStore((state) => state);
 
-  const { status, pageSize } = getFiltersState();
+  const { status } = getFiltersState();
 
   const onSearchChange = useDebouncedCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -32,10 +26,6 @@ const ActionBar = ({ isFetching }: ActionBarProps) => {
 
   const onStatusChange = (status: string) => {
     setStatus(status);
-  };
-
-  const onPageSizeChange = (pageSize: string) => {
-    setPageSize(Number(pageSize));
   };
 
   return (
@@ -57,8 +47,6 @@ const ActionBar = ({ isFetching }: ActionBarProps) => {
           <SelectItem value="unknown">Unknown</SelectItem>
         </SelectContent>
       </Select>
-
-      <PageSizeSelect onChange={onPageSizeChange} value={pageSize} />
 
       <Button variant="secondary" onClick={resetFilters} disabled={isFetching}>
         Reset filters

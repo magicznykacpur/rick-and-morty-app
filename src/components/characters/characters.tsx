@@ -7,7 +7,7 @@ import { useCharactersFiltersStore } from '@/stores/character-filters-store';
 
 const Characters = () => {
   const { getFiltersState } = useCharactersFiltersStore((state) => state);
-  const { searchString, status, pageSize } = getFiltersState();
+  const { searchString, status} = getFiltersState();
 
   const { data, isLoading, isFetching } = useGetCharactersQuery({
     searchString,
@@ -24,7 +24,7 @@ const Characters = () => {
       <ActionBar isFetching={isFetching} />
 
       {data && data.results && (
-        <CharactersTable columns={columns} data={data.results} pageSize={pageSize}/>
+        <CharactersTable columns={columns} data={data.results} />
       )}
     </>
   );

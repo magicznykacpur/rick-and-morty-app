@@ -1,3 +1,12 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -6,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { SelectTrigger, SelectValue } from '@radix-ui/react-select';
+import { useCharactersFiltersStore } from '@/stores/character-filters-store';
 import {
   flexRender,
   getCoreRowModel,
@@ -17,26 +26,26 @@ import {
   type PaginationState,
   type SortingState,
 } from '@tanstack/react-table';
-import { useEffect, useState } from 'react';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem } from '../ui/select';
+import { useState } from 'react';
 
 type CharactersTableProps<Data, Value> = {
   columns: ColumnDef<Data, Value>[];
   data: Data[];
-  pageSize: number;
 };
 
 const CharactersTable = <Data, Value>({
   columns,
   data,
-  pageSize,
 }: CharactersTableProps<Data, Value>) => {
+  const { getFiltersState, setPageSize } = useCharactersFiltersStore(
+    (state) => state,
+  );
+  const { pageSize } = getFiltersState();
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize,
   });
 
   const table = useReactTable({
@@ -53,13 +62,9 @@ const CharactersTable = <Data, Value>({
     },
   });
 
-  useEffect(() => {
-    table.setPageSize(pageSize);
-  }, [pageSize]);
-
   return (
     <div className="overflow-hidden rounded-md border">
-      <Table className='w-[600px] md:w-[800px] lg:w-[980px] xl:w-[1300px] table-fixed'>
+      <Table className="w-[600px] md:w-[800px] lg:w-[980px] xl:w-[1300px] table-fixed">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -143,37 +148,45 @@ const CharactersTable = <Data, Value>({
             {table.getPageCount().toLocaleString()}
           </strong>
         </span>
-        <span className="flex items-center gap-4">
-          Go to page:
+        <span>|</span>
+        <div className="flex items-center gap-4">
+          <span>Go to page:</span>
           <Input
             type="number"
             min="1"
             max={table.getPageCount()}
-            className='w-[50px]'
+            className="w-[65px]"
             defaultValue={table.getState().pagination.pageIndex + 1}
             onChange={(e) => {
               const page = e.target.value ? Number(e.target.value) - 1 : 0;
               table.setPageIndex(page);
             }}
           />
-        </span>
-        <Select
-          value={String(table.getState().pagination.pageSize)}
-          onValueChange={(value) => {
-            table.setPageSize(Number(value));
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <SelectItem key={pageSize} value={String(pageSize)}>
-                Show {pageSize}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        </div>
+        <span>|</span>
+        <div className="flex gap-4 items-center">
+          <span>Page size</span>
+          <Select
+            value={String(pageSize)}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+              setPageSize(Number(value));
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Page size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectContent>
+                {[1, 3, 5, 10, 15, 20, 30, 50].map((value, index) => (
+                  <SelectItem key={index} value={String(value)}>
+                    {value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );
