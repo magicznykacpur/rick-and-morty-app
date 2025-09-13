@@ -84,3 +84,26 @@ export const useGetCharactersQuery = (
     queryFn: () => getCharacters(charactersRequest),
     placeholderData: keepPreviousData,
   });
+
+export type GetCharacterResponse = Character & { error?: string };
+
+const getCharacter = async (id: number): Promise<GetCharacterResponse> => {
+  const response = await fetch(
+    `https://rickandmortyapi.com/api/character/${id}`,
+  );
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`No result found for character with id: ${id}`);
+    }
+
+    throw new Error(
+      `api/character/${id} request failed with ${response.status}`,
+    );
+  }
+
+  return response.json();
+};
+
+export const useGetCharacterQuery = (id: number) =>
+  useQuery({ queryKey: ['character', id], queryFn: () => getCharacter(id) });

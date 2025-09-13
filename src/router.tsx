@@ -6,6 +6,7 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 import { Slide, ToastContainer } from 'react-toastify';
+import Character from './components/character/character';
 import Characters from './components/characters/characters';
 import QueryProvider from './providers/query-provider';
 
@@ -35,7 +36,7 @@ const rootRoute = createRootRoute({
   ),
 });
 
-const home = createRoute({
+const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: () => (
@@ -45,7 +46,17 @@ const home = createRoute({
   ),
 });
 
-const routeTree = rootRoute.addChildren([home]);
+const characterRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/character/$id',
+  component: () => (
+    <div className="flex flex-col justify-start items-center">
+      <Character />
+    </div>
+  ),
+});
+
+const routeTree = rootRoute.addChildren([homeRoute, characterRoute]);
 
 const router = createRouter({ routeTree });
 

@@ -1,6 +1,7 @@
 import type { Character } from '@/api/character';
 import { Button } from '@/components/ui/button';
 import { toShortDate } from '@/lib/date';
+import { Link } from '@tanstack/react-router';
 import type { ColumnDef, Row } from '@tanstack/react-table';
 import { ChevronsUpDown } from 'lucide-react';
 import { useMemo, type ReactNode } from 'react';
@@ -10,18 +11,16 @@ const useCharactersColumns = () => {
     accessorKey: keyof Character,
     label: string,
     options: {
-      className?: string;
       cell?: ({ row }: { row: Row<Character> }) => ReactNode;
-    } = {className: 'min-w-[300px]'},
+    } = {},
   ): ColumnDef<Character> => ({
     accessorKey,
     header: ({ column }) => (
       <Button
         variant="ghost"
-        className='pl-0!'
+        className="pl-0!"
         onClick={() => {
-            console.log('sortin')
-            column.toggleSorting(column.getIsSorted() === 'asc')
+          column.toggleSorting(column.getIsSorted() === 'asc');
         }}
       >
         {label}
@@ -34,7 +33,21 @@ const useCharactersColumns = () => {
 
   return useMemo(
     (): ColumnDef<Character>[] => [
-      renderSortableColumn('name', 'Name'),
+      renderSortableColumn('name', 'Name', {
+        cell: ({ row }) => {
+          const name = row.original.name;
+
+          return (
+            <Link
+              to="/character/$id"
+              params={{ id: row.original.id }}
+              className="cursor-pointer dark:text-white text-black"
+            >
+              {name}
+            </Link>
+          );
+        },
+      }),
       renderSortableColumn('status', 'Status'),
       renderSortableColumn('species', 'Species'),
       renderSortableColumn('type', 'Type', {
@@ -53,14 +66,7 @@ const useCharactersColumns = () => {
       }),
       renderSortableColumn('image', 'Image', {
         cell: ({ row }) => (
-          <img className="rounded-md w-[62px]" src={row.original.image} />
-        ),
-      }),
-      renderSortableColumn('url', 'URL', {
-        cell: ({ row }) => (
-          <a href={row.original.url} className="text-blue-400 cursor-pointer">
-            {row.original.url}
-          </a>
+          <img className="rounded-full w-[62px]" src={row.original.image} />
         ),
       }),
       renderSortableColumn('created', 'Created', {
