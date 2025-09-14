@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/collapsible';
 import { toShortDate } from '@/lib/date';
 import { cn } from '@/lib/utils';
-import { useCanGoBack, useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { ChevronsUpDown, Loader2 } from 'lucide-react';
 
 const Character = () => {
@@ -23,17 +23,25 @@ const Character = () => {
   const { data, isLoading } = useGetCharacterQuery(Number(id));
 
   const navigate = useNavigate();
-  const canGoBack = useCanGoBack();
 
   const onGoBackClick = () => {
-    if (canGoBack) navigate({ to: '/' });
+    navigate({ to: '/' });
   };
 
   return (
     <>
       <Button size="lg" className="mb-8" onClick={onGoBackClick}>
-        Go back
+        Back to home
       </Button>
+
+      {!data && !isLoading && (
+        <div className="flex flex-col my-8">
+          <div className="flex gap-1 text-2xl">
+            <span>No results found for character with id:</span>
+            <strong>{id}</strong>
+          </div>
+        </div>
+      )}
 
       {isLoading && <Loader2 size={54} className="animate-spin my-24" />}
 

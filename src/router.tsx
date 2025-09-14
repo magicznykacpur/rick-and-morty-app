@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 import { Slide, ToastContainer } from 'react-toastify';
-import Character from './components/character/character';
+import Character from './components/character';
 import Characters from './components/characters/characters';
 import QueryProvider from './providers/query-provider';
 
@@ -18,19 +18,23 @@ const rootRoute = createRootRoute({
           Rick and Morty Characters
         </span>
       </div>
-      <Outlet />
+      <div className="flex flex-col justify-start items-center">
+        <Outlet />
+      </div>
       <ToastContainer
         position="bottom-left"
         autoClose={5000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick={false}
+        closeButton={false}
         rtl={false}
         pauseOnFocusLoss
         draggable={false}
         pauseOnHover
         theme="dark"
         transition={Slide}
+        toastClassName="flex! justify-center! w-[370px]! h-[80px]! text-sm"
       />
     </QueryProvider>
   ),
@@ -39,21 +43,13 @@ const rootRoute = createRootRoute({
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: () => (
-    <div className="flex flex-col justify-start items-center">
-      <Characters />
-    </div>
-  ),
+  component: () => <Characters />,
 });
 
 const characterRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/character/$id',
-  component: () => (
-    <div className="flex flex-col justify-start items-center">
-      <Character />
-    </div>
-  ),
+  component: () => <Character />,
 });
 
 const routeTree = rootRoute.addChildren([homeRoute, characterRoute]);
